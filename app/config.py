@@ -33,6 +33,11 @@ class Config:
     JWT_COOKIE_CSRF_PROTECT = False
 
     WTF_CSRF_TIME_LIMIT = None
+    # The token itself (bound to the signed session) plus SameSite=Lax already stop CSRF;
+    # the extra mandatory-Referer check under WTF_CSRF_SSL_STRICT rejects real logins whenever
+    # a browser/extension/proxy strips the Referer header on an HTTPS POST, which is common
+    # enough (strict tracking protection, some ad blockers, some corporate proxies) to disable it.
+    WTF_CSRF_SSL_STRICT = False
 
     ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@foodies.com")
     ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "ChangeMe123!")
