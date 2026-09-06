@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="page-header"><div><h1>My Orders</h1></div></div>
+
+{% if orders %}
+{% for order in orders %}
+<a class="order-card" style="display:block;" href="{{ url_for('customer.order_detail', order_id=order.id) }}">
+  <div class="order-card-top">
+    <span class="order-id">Order #{{ order.id }} &middot; {{ order.restaurant.name }}</span>
+    <span class="status-pill status-{{ order.status }}">{{ order.status.replace('_', ' ') }}</span>
+  </div>
+  <div class="menu-item-desc">Placed {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }} &middot; ${{ "%.2f"|format(order.total_amount) }}</div>
+</a>
+{% endfor %}
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-icon">📦</div>
+  <p>You haven't placed any orders yet.</p>
+  <a href="{{ url_for('customer.restaurants') }}" class="btn btn-primary" style="margin-top: 12px;">Browse restaurants</a>
+</div>
+{% endif %}
+{% endblock %}

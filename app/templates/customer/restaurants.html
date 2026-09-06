@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Restaurants{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Restaurants near you</h1>
+    <p>Pick a restaurant to browse its menu.</p>
+  </div>
+</div>
+
+{% if restaurants %}
+<div class="grid">
+  {% for r in restaurants %}
+  <a class="tile" href="{{ url_for('customer.menu', restaurant_id=r.id) }}">
+    <div class="tile-icon">{{ r.icon }}</div>
+    <div class="tile-title">{{ r.name }}</div>
+    <div class="tile-desc">{{ r.description or '' }}</div>
+    <span class="badge">{{ r.cuisine }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-icon">🍽️</div>
+  <p>No restaurants are available right now.</p>
+</div>
+{% endif %}
+{% endblock %}

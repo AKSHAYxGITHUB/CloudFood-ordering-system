@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ restaurant.name }} Menu{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>{{ restaurant.icon }} {{ restaurant.name }}</h1>
+    <p>{{ restaurant.description or '' }}</p>
+  </div>
+  <a href="{{ url_for('customer.restaurants') }}" class="btn btn-secondary btn-sm">&larr; All restaurants</a>
+</div>
+
+{% set categories = items | map(attribute='category') | unique | list %}
+{% if items %}
+  {% for category in categories %}
+    <div class="category-label">{{ category }}</div>
+    {% for item in items if item.category == category %}
+    <div class="menu-item">
+      <div class="menu-item-icon">{{ item.icon }}</div>
+      <div class="menu-item-body">
+        <div class="menu-item-name">{{ item.name }}</div>
+        <div class="menu-item-desc">{{ item.description or '' }}</div>
+      </div>
+      <div class="menu-item-price">${{ "%.2f"|format(item.price) }}</div>
+      {% if current_user and not current_user.is_admin %}
+      <form method="post" action="{{ url_for('customer.add_to_cart', menu_item_id=item.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+      </form>
+      {% elif not current_user %}
+      <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-sm">Login to order</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% endfor %}
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-icon">🍳</div>
+  <p>This restaurant hasn't added any menu items yet.</p>
+</div>
+{% endif %}
+{% endblock %}

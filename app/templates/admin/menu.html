@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Manage Menu{% endblock %}
+{% block content %}
+<div class="page-header"><div><h1>Manage Menu</h1><p>{{ restaurant.name }}</p></div></div>
+
+<div class="card" style="margin-bottom: 24px;">
+  <div class="card-title">Add Menu Item</div>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field"><label>Name</label><input type="text" name="name" placeholder="e.g. Margherita Pizza" required></div>
+    <div class="field"><label>Description</label><input type="text" name="description" placeholder="Short description"></div>
+    <div class="field-row" style="align-items: flex-start; gap: 16px;">
+      <div class="field" style="flex:1;"><label>Category</label><input type="text" name="category" placeholder="Main / Starter / Dessert" value="Main"></div>
+      <div class="field" style="flex:1;"><label>Icon (emoji)</label><input type="text" name="icon" placeholder="🍕" value="🍔"></div>
+      <div class="field" style="flex:1;"><label>Price ($)</label><input type="number" step="0.01" min="0.01" name="price" placeholder="9.99" required></div>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Item</button>
+  </form>
+</div>
+
+{% if items %}
+<div class="table-card">
+  <table>
+    <thead><tr><th>Item</th><th>Category</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.icon }} {{ item.name }}</td>
+        <td>{{ item.category }}</td>
+        <td>${{ "%.2f"|format(item.price) }}</td>
+        <td>{% if item.is_available %}<span class="status-pill status-delivered">available</span>{% else %}<span class="status-pill status-cancelled">hidden</span>{% endif %}</td>
+        <td class="actions-row">
+          <form class="inline-form" method="post" action="{{ url_for('admin.toggle_menu_item', item_id=item.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-secondary btn-sm">{{ 'Hide' if item.is_available else 'Show' }}</button>
+          </form>
+          <form class="inline-form" method="post" action="{{ url_for('admin.delete_menu_item', item_id=item.id) }}" data-confirm="Delete this item?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><p>No menu items yet. Add your first item above.</p></div>
+{% endif %}
+{% endblock %}

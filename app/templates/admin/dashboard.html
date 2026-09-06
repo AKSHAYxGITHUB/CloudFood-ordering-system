@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>{{ restaurant.icon }} {{ restaurant.name }} &mdash; Dashboard</h1><p>Restaurant Admin overview</p></div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="stat-value">{{ stats.total_orders }}</div><div class="stat-label">Total Orders</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.pending_orders }}</div><div class="stat-label">Pending Orders</div></div>
+  <div class="stat-card"><div class="stat-value">${{ "%.2f"|format(stats.revenue) }}</div><div class="stat-label">Revenue (completed)</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.menu_item_count }}</div><div class="stat-label">Menu Items</div></div>
+</div>
+
+<div class="page-header"><div><h1 style="font-size:1.2rem;">Recent Orders</h1></div>
+  <a href="{{ url_for('admin.orders') }}" class="btn btn-secondary btn-sm">View all</a>
+</div>
+
+{% if recent_orders %}
+<div class="table-card">
+  <table>
+    <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Placed</th></tr></thead>
+    <tbody>
+      {% for order in recent_orders %}
+      <tr>
+        <td>#{{ order.id }}</td>
+        <td>{{ order.customer.name }}</td>
+        <td>${{ "%.2f"|format(order.total_amount) }}</td>
+        <td><span class="status-pill status-{{ order.status }}">{{ order.status.replace('_', ' ') }}</span></td>
+        <td>{{ order.created_at.strftime('%d %b, %I:%M %p') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><p>No orders yet.</p></div>
+{% endif %}
+{% endblock %}

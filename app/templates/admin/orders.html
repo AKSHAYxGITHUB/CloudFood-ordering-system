@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Manage Orders{% endblock %}
+{% block content %}
+<div class="page-header"><div><h1>Orders</h1><p>{{ restaurant.name }}</p></div></div>
+
+{% if orders %}
+<div class="table-card">
+  <table>
+    <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Update</th></tr></thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>#{{ order.id }}<br><span class="menu-item-desc">{{ order.created_at.strftime('%d %b, %I:%M %p') }}</span></td>
+        <td>{{ order.customer.name }}</td>
+        <td>{{ order.items | map(attribute='quantity') | sum }} item(s)</td>
+        <td>${{ "%.2f"|format(order.total_amount) }}</td>
+        <td><span class="status-pill status-{{ order.status }}">{{ order.status.replace('_', ' ') }}</span></td>
+        <td>
+          <form class="inline-form" method="post" action="{{ url_for('admin.update_order_status', order_id=order.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="status" class="auto-submit">
+              {% for s in statuses %}
+              <option value="{{ s }}" {{ 'selected' if s == order.status }}>{{ s.replace('_', ' ') | title }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><p>No orders yet.</p></div>
+{% endif %}
+{% endblock %}

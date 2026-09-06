@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block nav %}{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-logo">{% include "partials/_dome_icon.html" %}</div>
+  <div class="auth-title">Foodies</div>
+  <div class="auth-subtitle">Food Ordering System</div>
+
+  <div class="card">
+    <div class="card-title">Login to your account</div>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="field">
+        <label for="email">Email Address</label>
+        {{ form.email(id="email", placeholder="Enter your email") }}
+        {% for error in form.email.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        {{ form.password(id="password", placeholder="Enter your password") }}
+        {% for error in form.password.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field-row">
+        <label class="checkbox-row">{{ form.remember() }} Remember me</label>
+        <a href="#" class="link-accent">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Login</button>
+    </form>
+    <div class="divider-or">OR</div>
+    <div class="auth-footer-line">
+      Don't have an account? <a href="{{ url_for('auth.signup') }}" class="link-accent">Sign up</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block content_end %}{% endblock %}
